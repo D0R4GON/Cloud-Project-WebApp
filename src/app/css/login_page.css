@@ -1,0 +1,145 @@
+.comment-input {
+    width: 97%;
+    height: 100px;
+    font-size: 12px;
+    padding: 10px;
+    text-align: left;
+    text-justify: auto;
+    align-content: center;
+    margin: auto;
+    border-radius: .5em;
+    max-width: 97%;
+    min-width: 97%;
+}
+
+.login-card, .register-card,
+.account-card, .map-card,
+.home-card {
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #e8e8e8;
+    box-shadow: 2px 2px 10px #ccc;
+}
+
+.login-card, .account-card {
+    width: 300px;
+}
+
+.register-card, .map-card,
+.home-card {
+    width: 650px;
+}
+
+
+.card-header {
+    text-align: center;
+    margin-bottom: 40px
+}
+
+.card-header .log {
+    margin: 0;
+    font-size: 24px;
+    color: black;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+/* text */
+
+label {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.difficulty-label {
+    font-size: 22px;
+    margin-bottom: 5px;
+    color: grey;
+    text-decoration: underline;
+}
+
+.error-message {
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 5px;
+    color: crimson;
+    text-decoration: underline;
+}
+
+#required {
+    text-decoration: none;
+}
+
+/* inputs */
+
+input[class="whole"], input[class="half"]{
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[class="whole"]{
+    width: 100%;
+}
+input[class="half"] {
+    width: 49%;
+}
+
+input[class="button"], .register-button{
+    width: 100%;
+    background-color: #333;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover, .register-button:hover{
+    background-color: #ccc;
+    color: black;
+}
+
+button:is([class="easy"],[class="medium"],[class="hard"]){
+    width: 55px;
+    height: 55px;
+    color: black;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    margin-left: 20px;
+    margin-top: 10px;
+    font-family: Arial, "Arial CE", "Helvetica CE", sans-serif;
+}
+
+button:is([class="easy"],[class="medium"],[class="hard"]):hover{
+    background-color: #ccc;
+}
+
+
+button:is([class="easy"],[class="medium"],[class="hard"]):hover {
+    background-color: whitesmoke;
+}
+
+button[class="easy"] {
+    background-color: greenyellow;
+}
+button[class="medium"]{
+    background-color: royalblue;
+}
+button[class="hard"] {
+    background-color: red;
+}
+
+/* button */
+
+.register-button a {
+    color: white !important;
+}
+
