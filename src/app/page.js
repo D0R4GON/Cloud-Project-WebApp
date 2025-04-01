@@ -10,6 +10,7 @@ import HomePage from "./pages/home";
 import ProfilePage from "./pages/profile";
 import UserItemListPage from "./pages/userItems";
 import ChangeProfilePage from "./pages/profileChange";
+import OfferItemPage from "./pages/offerItems";
 
 
 export default function Home() {

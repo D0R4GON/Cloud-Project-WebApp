@@ -1,4 +1,4 @@
-import "../css/global.css"
+import "../css/globals.css"
 
 export default function OfferItemPage() {
 
