@@ -31,6 +31,9 @@ export default function ProfilePage({setLoggedUser, setBar}) {
                     <input className="button" type="submit" value="My items" placeholder="userList" onClick={handleBarChange}/>
                 </div>
                 <div className="form-group">
+                    <input className="button" type="submit" value="Offer item" placeholder="offer" onClick={handleBarChange}/>
+                </div>
+                <div className="form-group">
                     <input className="button" type="submit" value="Logout" onClick={handleLogout}/>
                 </div>
             </div>  

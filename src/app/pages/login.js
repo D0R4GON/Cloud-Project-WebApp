@@ -4,6 +4,9 @@ import "../css/login_page.css"
 import { useState } from "react";
 import Cookies from "js-cookie"
 
+// import { Authenticator } from '@aws-amplify/ui-react';
+// import '@aws-amplify/ui-react/styles.css';
+
 
 export default function LoginPage({setLoggedUser, setBar}) {
     // needed to choose if it shows login page or register page
@@ -192,4 +195,14 @@ export default function LoginPage({setLoggedUser, setBar}) {
             </div>
         </div>
     );
+
+    // return (
+    //     <div className="login_page">
+    //         <div className="login-card">
+    //             <Authenticator>
+
+    //             </Authenticator>
+    //         </div>
+    //     </div>
+    // );
 }
