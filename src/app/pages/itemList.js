@@ -1,11 +1,16 @@
 "use client";
 
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
+import React from "react";
+const axios = require('axios');
 
-export function ItemListPage({user}) {
+export default function ItemListPage({ user, itemCategory }) {
     const [field, setField] = useState("all");
     const [selectedItem, setSelectedItem] = useState(null);
-    const [itemList,setItemList] = useState([]);
+    const [itemList, setItemList] = useState([]);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/getByCategory';
+
 
     // choose which items to show
     useEffect(() => {
@@ -16,63 +21,177 @@ export function ItemListPage({user}) {
         }
         setSelectedItem(null);
         setItemList([]);
-        getItemsFromCloud();
+
+        // get items
+        if (user) {
+            getList();
+        } else {
+            if (itemCategory != "Všetko"){
+                const data = {
+                    id_category: itemCategory
+                };
+                
+                fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then((response) => response.json())
+                    .then((json) => {
+                        const parsedBody = JSON.parse(json.body);
+                        const ads = parsedBody.ads;
+                
+                        setItemList(ads);  // Update your UI or state with the ads
+                        console.log('Fetched ads:', ads);
+                    })
+                    .catch((err) => {
+                        console.error('Error posting data:', err);
+                    });
+
+            } else {
+                getList();
+            }
+        }
+
     }, [user]);
 
-        
-    // get items from cloud 
-    // add and change later
-    const getItemsFromCloud = () => {
-        if (user){
-            setItemList([1])
-        } else {
-            setItemList([1,2,3,4,5])
-        }
+    // get list from 
+    const getList = () => {
+        const https = require('https');
+
+
+        https.get(API_URL, (res) => {
+            let data = '';
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+                try {
+                    const json = JSON.parse(data);
+                    const parsedBody = JSON.parse(json.body);
+                    const ads = parsedBody.ads;
+
+                    setItemList(ads);
+                    console.log('Fetched ads:', ads);
+                } catch (err) {
+                    console.error('Error parsing response:', err);
+                }
+            });
+        }).on('error', (err) => {
+            console.error('Error fetching ads:', err.message);
+        });
     }
 
-
-    // changes field to the item user clicked
+    // handle click on item
     const handleClick = (item) => {
         setField('oneItem');
         setSelectedItem(item);
     };
 
-    // for rendering items inside boxes 
+    // sorting
+    const sortedItems = React.useMemo(() => {
+        let sortableItems = [...itemList];
+        if (sortConfig.key !== null) {
+            sortableItems.sort((a, b) => {
+                const { key, direction } = sortConfig;
+                const aVal = a[key];
+                const bVal = b[key];
+            
+                if (key === 'cena_prenajmu') {
+                    // Numeric sort
+                    return direction === 'ascending' ? aVal - bVal : bVal - aVal;
+                } else {
+                    // String (locale-aware) sort
+                    return direction === 'ascending'
+                        ? aVal.localeCompare(bVal)
+                        : bVal.localeCompare(aVal);
+                }
+            });
+            
+        }
+        return sortableItems;
+    }, [itemList, sortConfig]);
+    
+
+    // render items with image on left, name under image, description in the middle, and price on the right
     const renderItemsInBoxes = () => {
-        return itemList.map((item, index) => (
-            <div className="itemBox" key={index} onClick={() => handleClick(item)}>
-                <h1>Item {item}</h1>
+        return sortedItems.map((item) => (
+            <div className="itemBox" key={item.ad_id} onClick={() => handleClick(item)}>
+                <img className="itemImage" src={item.image_urls[0]} alt={item.nazov}/>
+                <div className="itemDetails">
+                    <h2>{item.nazov}</h2>
+                    <p>{item.popis}</p>
+                </div>
+                <p className="itemPrice">${item.cena_prenajmu}</p>
             </div>
         ));
     };
+    
+    // change sort arrow
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
 
-    // render diff fields
+    // render header for item list
+    const renderHeader = () => {
+        return (
+            <div className="itemHeader">
+                <div className="name"></div>
+                <label className="radio">
+                    <button type="radio" name="radio" onClick={() => requestSort('nazov')}></button>
+                    <div className="itemName">Názov</div>
+                </label>
+
+                <label className="radio">
+                    <button type="radio" name="radio" onClick={() => requestSort('cena_prenajmu')}></button>
+                    <p className="itemName">Cena</p>
+                </label>
+            </div>
+        );
+    };
+
+
+    // render different fields
     const renderField = () => {
         switch (field) {
-            case 'user':
-                return <div className="Field">{renderItemsInBoxes()}</div>
             case 'oneItem':
                 return <OneItemPage item={selectedItem} />
             default:
                 return (
                     <>
-                        <div className="Field">Here will be aws search</div>
-                        <div className="Field">{renderItemsInBoxes()}</div>
+                        {renderHeader()}
+                        <div className="ItemField">{renderItemsInBoxes()}</div>                    
                     </>
                 )
         }
     }
 
     return (
-        <>{renderField()}</>
+        <>
+            {renderField()}
+        </>
     );
+
 }
 
 // function to show only one item on the field
-export function OneItemPage({item}) {
+export function OneItemPage({ item }) {
+    console.log(item.image_urls[0]);
+
     return (
         <div className="OneItemPage">
-            <h1>One Item: {item}</h1>
+            <h1>Názov: {item.nazov}</h1>
+            <img src={item.image_urls[0]} alt={item.name} />
+            <p>Cena za prenájom: € {item.cena_prenajmu}</p>
+            <p>Záloha: € {item.cena_zalohy}</p>
+            <p>{item.popis}</p>
         </div>
     );
 }

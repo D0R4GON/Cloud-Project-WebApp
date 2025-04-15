@@ -8,10 +8,12 @@ header {
   border-bottom: black solid 2px;
   box-shadow: 4px 4px 10px black;
   padding: 5px 5px;
+  position: sticky;
+  top: 0; 
+  z-index: 1000;
 }
 
 /* menuBar */
-
 .menuBar {
   position: relative;
   margin: auto;
@@ -40,7 +42,6 @@ header {
   text-decoration: none;
 }
 
-.menuBar .radio .name:hover {
-  color: grey;
-}
-
+/* .menuBar .radio .name:hover {
+  color: red;
+} */

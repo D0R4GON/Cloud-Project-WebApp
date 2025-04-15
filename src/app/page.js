@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Cookies from "js-cookie";
+import { useState } from "react";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
 import Menu from "./pages/menu";
-import { ItemListPage, UserItemsPage } from "./pages/itemList";
+import ItemListPage from "./pages/itemList";
 import LoginPage from "./pages/login";
 import HomePage from "./pages/home";
 import ProfilePage from "./pages/profile";
@@ -13,15 +13,9 @@ import OfferItemPage from "./pages/offerItems";
 
 export default function Home() {
   const [bar, setBar] = useState("home");
-  const [loggedUser, setLoggedUser] = useState(null);
-
-  // Check for username cookie on page load
-  useEffect(() => {
-    const user = Cookies.get("username");
-    if (user) {
-      setLoggedUser(user);
-    }
-  }, []);
+  const [itemCategory, setItemCategory] = useState('');
+  
+  const { route } = useAuthenticator((context) => [context.route]);
 
   // Function to update bar and force re-render
   const updateBar = (newBar) => {
@@ -31,26 +25,26 @@ export default function Home() {
   // Render correct field set by menu
   const renderField = () => {
     switch (bar) {
-      case "login":
-        return <LoginPage setLoggedUser={setLoggedUser} setBar={updateBar} />;
       case "profile":
-        return <ProfilePage setLoggedUser={setLoggedUser} setBar={updateBar} />;
+        return route === "authenticated" ? 
+          <ProfilePage setBar={updateBar} /> : 
+          <LoginPage setBar={updateBar} />;
       case "search":
-        return <ItemListPage/>;
+        return <ItemListPage itemCategory={itemCategory}/>;
       case "userList":
-          return <ItemListPage user={loggedUser}/>;      
+          return <ItemListPage />;      
       case "offer":
         return <OfferItemPage />;
       case "profileChange":
         return <ChangeProfilePage setBar={updateBar} />;
       default:
-        return <HomePage />;
+        return <HomePage setBar={setBar} setItemCategory={setItemCategory}/>;
     }
   };
 
   return (
     <div className="whole_page">
-      <Menu bar={bar} setBar={updateBar} loggedUser={loggedUser} setLoggedUser={setLoggedUser} />
+      <Menu bar={bar} setBar={updateBar} />
       {renderField()}
     </div>
   );

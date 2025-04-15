@@ -17,10 +17,10 @@
 .home-card {
     margin: 50px auto;
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #e8e8e8;
-    box-shadow: 2px 2px 10px #ccc;
+    /* border: 1px solid #ccc; */
+    /* border-radius: 10px; */
+    /* background-color: #e8e8e8; */
+    /* box-shadow: 2px 2px 10px #ccc; */
 }
 
 .login-card, .account-card {
@@ -143,3 +143,6 @@ button[class="hard"] {
     color: white !important;
 }
 
+.authCard {
+    margin-top: 5vh;
+}
