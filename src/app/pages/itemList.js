@@ -9,7 +9,7 @@ export default function ItemListPage({ user, itemCategory }) {
     const [selectedItem, setSelectedItem] = useState(null);
     const [itemList, setItemList] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-    const API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/getByCategory';
+    const API_URL = 'https://s5i38bp79b.execute-api.eu-central-1.amazonaws.com/dev/ads/getByCategory';
 
 
     // choose which items to show
