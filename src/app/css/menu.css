@@ -5,26 +5,26 @@ header {
   background: #dedede;
   display: flex;
   align-items: center;
+  justify-content: space-between; /* key change */
   border-bottom: black solid 2px;
   box-shadow: 4px 4px 10px black;
-  padding: 5px 5px;
+  padding: 5px 10px;
   position: sticky;
   top: 0; 
   z-index: 1000;
+  height: 50;
 }
 
 /* menuBar */
 .menuBar {
-  position: relative;
-  margin: auto;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   padding: 0.25vw;
   font-size: 1.5vw;
 }
 
+/* if you want to keep the radio styling */
 .menuBar .radio {
-  flex: 1 1 auto;
   text-align: center;
 }
 
@@ -37,11 +37,34 @@ header {
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  padding: .15vh 5vw;
+  padding: .05vh 1vw;
   color: black;
   text-decoration: none;
 }
 
-/* .menuBar .radio .name:hover {
-  color: red;
-} */
+/* moving side bar */
+.moving-text {
+  position: absolute;
+  top: 50%;
+  right: 50px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  background: none;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  z-index: 1000;
+}
+
+.moving-text li {
+  list-style: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+.moving-text li:hover {
+  color: grey;
+}

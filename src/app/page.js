@@ -7,15 +7,14 @@ import Menu from "./pages/menu";
 import ItemListPage from "./pages/itemList";
 import LoginPage from "./pages/login";
 import HomePage from "./pages/home";
-import ProfilePage from "./pages/profile";
-import ChangeProfilePage from "./pages/profileChange";
 import OfferItemPage from "./pages/offerItems";
+import BookingList from "./pages/offersList";
 
 export default function Home() {
   const [bar, setBar] = useState("home");
   const [itemCategory, setItemCategory] = useState('');
   
-  const { route } = useAuthenticator((context) => [context.route]);
+  const { route, user } = useAuthenticator((context) => [context.route, context.user]);
 
   // Function to update bar and force re-render
   const updateBar = (newBar) => {
@@ -25,18 +24,18 @@ export default function Home() {
   // Render correct field set by menu
   const renderField = () => {
     switch (bar) {
-      case "profile":
+      case "login":
         return route === "authenticated" ? 
-          <ProfilePage setBar={updateBar} /> : 
+          <HomePage setBar={setBar} setItemCategory={setItemCategory}/> :
           <LoginPage setBar={updateBar} />;
       case "search":
-        return <ItemListPage itemCategory={itemCategory}/>;
+        return <ItemListPage itemCategory={itemCategory} setBar={updateBar}/>;
       case "userList":
-          return <ItemListPage />;      
+          return <ItemListPage user={user.userId} itemCategory={"Všetko"} setBar={updateBar}/>;
       case "offer":
         return <OfferItemPage />;
-      case "profileChange":
-        return <ChangeProfilePage setBar={updateBar} />;
+      case "userOfferList":
+        return <BookingList />;
       default:
         return <HomePage setBar={setBar} setItemCategory={setItemCategory}/>;
     }

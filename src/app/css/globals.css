@@ -5,12 +5,12 @@
   --foreground: #171717;
 }
 
-@theme inline {
+/* @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+} */
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -51,7 +51,7 @@ body {
 /* Style each item box */
 .itemBox {
   display: grid;
-  grid-template-columns: 150px 1fr 100px; /* Image on the left, text in the middle, price on the right */
+  grid-template-columns: 150px 1fr 100px;
   gap: 1rem;
   align-items: center;
   padding: 10px;
@@ -70,7 +70,7 @@ body {
 
 .itemImage {
   width: 100%;
-  height: 100px; /* Fixed size for the image */
+  height: 100px;
   object-fit: cover;
   border-radius: 5px;
 }
@@ -110,7 +110,7 @@ body {
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  height: 100%; /* Ensures all boxes are the same height */
+  height: 100%; 
   max-width: 100%; /* Ensure boxes don’t exceed container width */
   box-sizing: border-box; /* Prevents overflow */
 }
@@ -135,9 +135,51 @@ select.whole {
   display: inline-block;  /* Ensures it takes full width inside the parent */
 }
 
+/* one item page */
 .OneItemPage{
-  margin: 30 20 20 20;
+  margin: 50 20 20 20;
+  font-size: 18px;
 }
+
+.item-container {
+  display: flex;
+  height: 100%;
+}
+
+.item-name{
+  width: 100%; /* Each takes up 48% of the width */
+  grid-template-columns: 150px 1fr 100px;
+  gap: 1rem;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px #aaa;
+  transition: all 0.3s ease;
+  align-items: flex-end;
+}
+
+.item-info {
+  width: 25%;
+  margin-left: 2%;
+}
+.item-description{
+  width: 73%;
+
+}
+
+.item-description,
+.item-info {
+  grid-template-columns: 150px 1fr 100px;
+  gap: 1rem;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px #aaa;
+  transition: all 0.3s ease;
+}
+
 
 /* item header */
 .itemHeader {
@@ -155,4 +197,14 @@ select.whole {
 
 .itemName:hover{
   cursor: pointer;
+}
+
+.pathBack {
+  margin: 10 10 -20 30;
+  cursor: default;
+}
+
+.pathBackPointer:hover {
+  cursor: pointer;
+  color: grey;
 }

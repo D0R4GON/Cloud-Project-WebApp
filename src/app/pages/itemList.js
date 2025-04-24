@@ -2,94 +2,52 @@
 
 import { useState, useEffect } from "react";
 import React from "react";
-const axios = require('axios');
+import OfferLoanPage from "./offerLoan";
+import OneItemPage from "./oneItem";
 
-export default function ItemListPage({ user, itemCategory }) {
+export default function ItemListPage({ user, itemCategory, setBar }) {
     const [field, setField] = useState("all");
     const [selectedItem, setSelectedItem] = useState(null);
     const [itemList, setItemList] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-    const API_URL = 'https://s5i38bp79b.execute-api.eu-central-1.amazonaws.com/dev/ads/getByCategory';
+    const API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/get';
 
 
-    // choose which items to show
+    // choose which items to show and get correct data from cloud
     useEffect(() => {
-        if (user) {
-            setField('user');
-        } else {
-            setField("all");
-        }
         setSelectedItem(null);
         setItemList([]);
 
         // get items
-        if (user) {
-            getList();
-        } else {
-            if (itemCategory != "Všetko"){
-                const data = {
-                    id_category: itemCategory
-                };
-                
-                fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                })
-                    .then((response) => response.json())
-                    .then((json) => {
-                        const parsedBody = JSON.parse(json.body);
-                        const ads = parsedBody.ads;
-                
-                        setItemList(ads);  // Update your UI or state with the ads
-                        console.log('Fetched ads:', ads);
-                    })
-                    .catch((err) => {
-                        console.error('Error posting data:', err);
-                    });
-
-            } else {
-                getList();
-            }
+        let data = {};
+        if (itemCategory != "Všetko"){
+            data = {
+                body: `{\"id_category\":\"${itemCategory}\"}`
+            };
         }
+            
+        fetch(API_URL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then((response) => response.json())
+        .then((json) => {
+            const parsedBody = JSON.parse(json.body);
+            const ads = parsedBody.ads;
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // filter for user change later
+            const filteredAds = user ? ads.filter(ad => ad.id_owner === user) : ads;
+            setItemList(filteredAds);
+        })
+        .catch((err) => {
+            console.error('Error posting data:', err);
+        });
 
     }, [user]);
-
-    // get list from 
-    const getList = () => {
-        const https = require('https');
-
-
-        https.get(API_URL, (res) => {
-            let data = '';
-            res.on('data', (chunk) => {
-                data += chunk;
-            });
-
-            res.on('end', () => {
-                try {
-                    const json = JSON.parse(data);
-                    const parsedBody = JSON.parse(json.body);
-                    const ads = parsedBody.ads;
-
-                    setItemList(ads);
-                    console.log('Fetched ads:', ads);
-                } catch (err) {
-                    console.error('Error parsing response:', err);
-                }
-            });
-        }).on('error', (err) => {
-            console.error('Error fetching ads:', err.message);
-        });
-    }
-
-    // handle click on item
-    const handleClick = (item) => {
-        setField('oneItem');
-        setSelectedItem(item);
-    };
 
     // sorting
     const sortedItems = React.useMemo(() => {
@@ -115,21 +73,26 @@ export default function ItemListPage({ user, itemCategory }) {
         return sortableItems;
     }, [itemList, sortConfig]);
     
+    // handle click on item
+    const handleClick = (item) => {
+        setField('oneItem');
+        setSelectedItem(item);
+    };
 
     // render items with image on left, name under image, description in the middle, and price on the right
     const renderItemsInBoxes = () => {
         return sortedItems.map((item) => (
             <div className="itemBox" key={item.ad_id} onClick={() => handleClick(item)}>
-                <img className="itemImage" src={item.image_urls[0]} alt={item.nazov}/>
+                <img className="itemImage" src={item.image_urls[0]} alt={item.image_urls[0]}/>
                 <div className="itemDetails">
                     <h2>{item.nazov}</h2>
                     <p>{item.popis}</p>
                 </div>
-                <p className="itemPrice">${item.cena_prenajmu}</p>
+                <p className="itemPrice">€{item.cena_prenajmu}</p>
             </div>
         ));
     };
-    
+
     // change sort arrow
     const requestSort = (key) => {
         let direction = 'ascending';
@@ -153,6 +116,7 @@ export default function ItemListPage({ user, itemCategory }) {
                     <button type="radio" name="radio" onClick={() => requestSort('cena_prenajmu')}></button>
                     <p className="itemName">Cena</p>
                 </label>
+
             </div>
         );
     };
@@ -162,36 +126,39 @@ export default function ItemListPage({ user, itemCategory }) {
     const renderField = () => {
         switch (field) {
             case 'oneItem':
-                return <OneItemPage item={selectedItem} />
+                return (
+                    <OneItemPage
+                        item={selectedItem}
+                        user={user}
+                        goBack={() => setField('all')}
+                        setField={setField}
+                    />
+                ); 
+            case 'responseForm':
+                return (
+                    <OfferLoanPage
+                        item={selectedItem}
+                        goBack={() => setField('oneItem')}
+                    />
+                );
             default:
                 return (
                     <>
+                        {user ? ( <></> ):(
+                            <div className="pathBack">
+                                <strong className="pathBackPointer" onClick={() => setBar('home')}>← Späť</strong>
+                            </div>
+                        )}  
                         {renderHeader()}
-                        <div className="ItemField">{renderItemsInBoxes()}</div>                    
+                        <div className="ItemField">{renderItemsInBoxes()}</div>
                     </>
                 )
         }
-    }
-
+    } 
     return (
         <>
             {renderField()}
         </>
     );
 
-}
-
-// function to show only one item on the field
-export function OneItemPage({ item }) {
-    console.log(item.image_urls[0]);
-
-    return (
-        <div className="OneItemPage">
-            <h1>Názov: {item.nazov}</h1>
-            <img src={item.image_urls[0]} alt={item.name} />
-            <p>Cena za prenájom: € {item.cena_prenajmu}</p>
-            <p>Záloha: € {item.cena_zalohy}</p>
-            <p>{item.popis}</p>
-        </div>
-    );
 }

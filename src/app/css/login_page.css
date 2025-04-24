@@ -76,7 +76,7 @@ label {
 
 /* inputs */
 
-input[class="whole"], input[class="half"]{
+input[class="whole"], input[class="half"], textarea[class="whole"]{
     padding: 12px 20px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -84,7 +84,7 @@ input[class="whole"], input[class="half"]{
     box-sizing: border-box;
 }
 
-input[class="whole"]{
+input[class="whole"], textarea[class="whole"]{
     width: 100%;
 }
 input[class="half"] {
@@ -134,7 +134,7 @@ button[class="medium"]{
     background-color: royalblue;
 }
 button[class="hard"] {
-    background-color: red;
+    background-color: grey;
 }
 
 /* button */

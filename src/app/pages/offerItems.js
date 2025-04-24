@@ -46,7 +46,7 @@ export default function OfferItemPage() {
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         const fileReaders = [];
-
+    
         files.forEach((file) => {
             const reader = new FileReader();
             fileReaders.push(
@@ -54,14 +54,14 @@ export default function OfferItemPage() {
                     reader.onloadend = () => {
                         resolve({
                             file_name: file.name,
-                            file_data: reader.result.split(',')[1],
+                            file_data: reader.result,
                         });
                     };
                 })
             );
             reader.readAsDataURL(file);
         });
-
+    
         Promise.all(fileReaders).then((fileDataArray) => {
             setFormData((prev) => ({
                 ...prev,
@@ -69,6 +69,7 @@ export default function OfferItemPage() {
             }));
         });
     };
+    
 
     // handle all on submit
     const handleSubmit = async (e) => {
@@ -144,15 +145,16 @@ export default function OfferItemPage() {
 
                 <div className="form-group">
                     <label htmlFor="description">Popis:</label>
-                    <input
+                    <textarea
                         className="whole"
-                        type="text"
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
                         required
+                        rows={4}
                     />
                 </div>
+
 
                 <div className="form-group">
                     <label htmlFor="deposit_price">Cena zálohy:</label>
@@ -212,7 +214,7 @@ export default function OfferItemPage() {
                     <label htmlFor="files">Súbory:</label>
                     <input
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg"
                         onChange={handleFileChange}
                         multiple
                         className="whole"
@@ -227,7 +229,8 @@ export default function OfferItemPage() {
                                 <div key={index} style={{ maxWidth: '150px', position: 'relative' }}>
                                     {file.file_name.toLowerCase().match(/\.(png|jpg|jpeg|gif|bmp|webp)$/) ? (
                                         <img
-                                            src={`data:image/*;base64,${file.file_data}`}
+                                            // src={`data:image/*;base64,${file.file_data}`}
+                                            src={`${file.file_data}`}
                                             alt={file.file_name}
                                             style={{ width: '100%', borderRadius: '8px' }}
                                         />
@@ -257,8 +260,6 @@ export default function OfferItemPage() {
                         </div>
                     </div>
                 )}
-
-
 
                 <input
                     type="submit"
