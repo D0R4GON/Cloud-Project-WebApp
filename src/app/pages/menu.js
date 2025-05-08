@@ -2,6 +2,7 @@
 
 import "../css/menu.css";
 import ProfileDropdown from "./profile";
+import { ShopLogo } from "../data/svgIcons";
 
 export default function Menu({ bar, setBar }) {
 
@@ -20,7 +21,11 @@ export default function Menu({ bar, setBar }) {
         <div className="menuBar">
             <label className="radio">
             <button type="radio" name="radio" value="home" checked={bar === "home"} onClick={handleRadioChange} />
-            <div className="name">PrenájomVecí(Logo)</div>
+            <div className="name">
+                <div style={{ marginTop:"50%"}}>
+                    <ShopLogo/>
+                </div>
+            </div>
             </label>
         </div>
             <div className="menuBar">

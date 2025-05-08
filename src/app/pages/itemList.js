@@ -11,7 +11,7 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
     const [itemList, setItemList] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/get';
-
+    const USER_API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/getUserItems';
 
     // choose which items to show and get correct data from cloud
     useEffect(() => {
@@ -20,13 +20,21 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
 
         // get items
         let data = {};
-        if (itemCategory != "Všetko"){
+        if (itemCategory){
+            if (itemCategory != "Všetko"){
+                data = {
+                    body: `{\"id_category\":\"${itemCategory}\"}`
+                };
+            }    
+        } else if (user) {
             data = {
-                body: `{\"id_category\":\"${itemCategory}\"}`
-            };
+                body: `{\"userID\":\"${user}\"}`
+            }; 
         }
-            
-        fetch(API_URL, {
+        
+        const API = user ? USER_API_URL : API_URL;
+        
+        fetch(API, {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -38,16 +46,13 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
         .then((json) => {
             const parsedBody = JSON.parse(json.body);
             const ads = parsedBody.ads;
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            // filter for user change later
-            const filteredAds = user ? ads.filter(ad => ad.id_owner === user) : ads;
-            setItemList(filteredAds);
+            setItemList(ads);
         })
         .catch((err) => {
             console.error('Error posting data:', err);
         });
 
-    }, [user]);
+    }, [user, itemCategory]);
 
     // sorting
     const sortedItems = React.useMemo(() => {

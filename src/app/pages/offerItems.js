@@ -6,6 +6,7 @@ import axios from 'axios';
 
 export default function OfferItemPage() {
     const { user } = useAuthenticator((context) => [context.route, context.user]);
+    const lambdaUrl = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/create';
     
     const [formData, setFormData] = useState({
         name: '',
@@ -52,9 +53,10 @@ export default function OfferItemPage() {
             fileReaders.push(
                 new Promise((resolve) => {
                     reader.onloadend = () => {
+                        const base64String = reader.result.split(',')[1]; // Remove metadata
                         resolve({
                             file_name: file.name,
-                            file_data: reader.result,
+                            file_data: base64String,
                         });
                     };
                 })
@@ -86,10 +88,7 @@ export default function OfferItemPage() {
             files: formData.files
         };
     
-        try {
-            // const lambdaUrl = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/create';
-            const lambdaUrl = 'https://s5i38bp79b.execute-api.eu-central-1.amazonaws.com/dev/ads/create';
-    
+        try {    
             const response = await axios.post(lambdaUrl, payload, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -229,8 +228,8 @@ export default function OfferItemPage() {
                                 <div key={index} style={{ maxWidth: '150px', position: 'relative' }}>
                                     {file.file_name.toLowerCase().match(/\.(png|jpg|jpeg|gif|bmp|webp)$/) ? (
                                         <img
-                                            // src={`data:image/*;base64,${file.file_data}`}
-                                            src={`${file.file_data}`}
+                                            src={`data:image/*;base64,${file.file_data}`}
+                                            // src={`${file.file_data}`}
                                             alt={file.file_name}
                                             style={{ width: '100%', borderRadius: '8px' }}
                                         />

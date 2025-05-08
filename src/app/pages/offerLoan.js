@@ -147,11 +147,12 @@ export default function OfferLoanPage({ item, goBack }) {
                     <p><strong>Majiteľ:</strong> {item.id_owner}</p>
                     <p><strong>Poloha:</strong> {item.lokalita}</p>
                     <br/>
-                    <p><strong>Vybraný čas</strong></p>
+                    <p><strong>Info pre majiteľa</strong></p>
                     <hr style={{ width: '100%', border: '1px solid black' }} />
                     <p><strong>Od dátumu:</strong> {formData.from_date}</p>
                     <p><strong>Do dátumu:</strong> {formData.to_date}</p>
                     <p><strong>Počet dní:</strong> {getNumberOfDays()}</p>
+                    <p><strong>Poznámky:</strong> {formData.notes}</p>
                     <br/>
                     <p><strong>Suma na zaplatenie</strong></p>
                     <hr style={{ width: '100%', border: '1px solid black' }} />
@@ -162,7 +163,7 @@ export default function OfferLoanPage({ item, goBack }) {
                         }
                     </p>
                     <p><strong>Záloha:</strong> {item.cena_zalohy} €</p>
-                    <p><strong>Celková suma:</strong> {formData.compesation_amount} €</p>
+                    <p><strong>Suma na zaplatenie:</strong> {formData.compesation_amount} €</p>
                 </div>
                 <input type="submit" className="button" value="Odoslať odpoveď" />
             </form>

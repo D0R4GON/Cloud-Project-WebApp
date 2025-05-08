@@ -8,7 +8,7 @@ import ItemListPage from "./pages/itemList";
 import LoginPage from "./pages/login";
 import HomePage from "./pages/home";
 import OfferItemPage from "./pages/offerItems";
-import BookingList from "./pages/offersList";
+import { BookingList } from "./pages/offersList";
 
 export default function Home() {
   const [bar, setBar] = useState("home");
@@ -31,7 +31,7 @@ export default function Home() {
       case "search":
         return <ItemListPage itemCategory={itemCategory} setBar={updateBar}/>;
       case "userList":
-          return <ItemListPage user={user.userId} itemCategory={"Všetko"} setBar={updateBar}/>;
+          return <ItemListPage user={user.userId} setBar={updateBar}/>;
       case "offer":
         return <OfferItemPage />;
       case "userOfferList":
