@@ -135,7 +135,7 @@ export default function OneItemPage({ user, item, setField }) {
                     <p><strong>Kategória:</strong> {item.id_category}</p>
                     <p><strong>Cena za prenájom:</strong> {item.cena_prenajmu} €</p>
                     <p><strong>Záloha:</strong> {item.cena_zalohy} €</p>
-                    {user.userId === item.id_owner ? (
+                    {user?.userId === item.id_owner ? (
                         <div className="form-group">
                             <input className="button" type="submit" value="Upraviť" onClick={handleEditReservation}/>
                             <input className="button" type="submit" value="Zmazať" onClick={handleDelete}/>
