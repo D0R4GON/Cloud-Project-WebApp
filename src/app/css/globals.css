@@ -206,5 +206,5 @@ select.whole {
 
 .pathBackPointer:hover {
   cursor: pointer;
-  color: grey;
+  color: red;
 }

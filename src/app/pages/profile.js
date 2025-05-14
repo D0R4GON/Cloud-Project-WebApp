@@ -1,16 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import "../css/login_page.css";
+import { getCurrentUser } from 'aws-amplify/auth';
 
 export default function ProfileDropdown({ setBar }) {
     const { route, signOut } = useAuthenticator((context) => [context.route]);
     const [open, setOpen] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const loadSession = async () => {
+            try {
+                const user = await getCurrentUser();
+
+                // Optional: set logged in state here
+                if (user){
+                    setLoggedIn(true);
+                }
+
+            } catch (err) {
+                // console.error("Failed to fetch session:", err);
+                setLoggedIn(false); // if session fails, mark as not logged in
+            }
+        };
+
+        loadSession();
+    }, [route]);
+
 
     const handleSelect = (value) => {
         if (value === "logout") {
             signOut();
+            setLoggedIn(false);
             setBar("home");
         } else {
             setBar(value);
@@ -20,13 +43,13 @@ export default function ProfileDropdown({ setBar }) {
 
     return (
         <div className="profile-dropdown">
-            <button className="dropdown-toggle" onClick={() => setOpen(!open)}>
+            <button className="dropdown-toggle">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 122.88 122.88"
                     width="30"
                     height="30"
-                    style={{ color: "#333", marginTop: "10", cursor: "pointer"}} // or any preferred color
+                    style={{ color: "#333", marginTop: "10"}}
                     >
                     <title>Profil</title>
                     <path
@@ -38,11 +61,13 @@ export default function ProfileDropdown({ setBar }) {
             </button>
             {/* {open && ( */}
                 <ul className="moving-text">
-                    {route === "authenticated" ? (
+                    {/* {route === "authenticated" ? ( */}
+                    {loggedIn ? (
                     <>
                         <li onClick={() => handleSelect("userList")}>Môj katalóg</li>
-                        <li onClick={() => handleSelect("userOfferList")}>História výpožičiek</li>
+                        <li onClick={() => handleSelect("userOfferList")}>Moje výpožičky</li>
                         <li onClick={() => handleSelect("offer")}>Zdieľaj ponuku</li>
+                        <li onClick={() => handleSelect("userProfile")}>Profil</li>
                         <li onClick={() => handleSelect("logout")}>Logout</li>
                     </>
                     ) : (

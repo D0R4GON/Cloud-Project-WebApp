@@ -1,19 +1,20 @@
 import axios from "axios";
 import React from "react";
 import { useEffect, useState } from 'react';
-import { ItemBookingList } from "./offersList";
+import ItemBookingList from "./offersList";
+import EditItemPage from "./editItem";
 
 // function to show only one item on the field
-export default function OneItemPage({ user, item, goBack, setField }) {
+export default function OneItemPage({ user, item, setField }) {
   const DELETE_API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/delete';
-  const GET_API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + `/booking/customer/${user}`;
   const [bookings, setBookings] = useState([]);
   const [fielder, setFielder] = useState("item");
-  
 
   useEffect(() => {
+
     const fetchBookings = async () => {
       try {
+        const GET_API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + `/booking/product/${item.ad_id}`;
         const response = await axios.get(GET_API_URL,
           {
             mode: 'cors',
@@ -25,6 +26,7 @@ export default function OneItemPage({ user, item, goBack, setField }) {
   
         const data = JSON.parse(response.data.body);
         setBookings(data);
+        console.log(data);
       } catch (err) {
         console.error(err);
       }
@@ -92,7 +94,18 @@ export default function OneItemPage({ user, item, goBack, setField }) {
   };
     
   const handleShowReservation = () => {
-    fielder == 'item' ? setFielder('booking') : setFielder('item');
+    setFielder('booking');
+  }
+  const handleEditReservation = () => {
+    setFielder('edit');
+  }
+  const handleShowItem = () => {
+    setFielder('item');
+  }
+  
+
+  const handleSetReservation = () => {
+    setField('responseForm')
   }
 
   const renderFielder = () => {
@@ -100,7 +113,7 @@ export default function OneItemPage({ user, item, goBack, setField }) {
       return (
         <>
         <div className="pathBack">
-            <strong className="pathBackPointer" onClick={goBack}>← Späť</strong>
+            <strong className="pathBackPointer" onClick={() => setField('all')}>← Späť</strong>
         </div>
         <div className="OneItemPage">
             <div className="item-name">
@@ -122,15 +135,15 @@ export default function OneItemPage({ user, item, goBack, setField }) {
                     <p><strong>Kategória:</strong> {item.id_category}</p>
                     <p><strong>Cena za prenájom:</strong> {item.cena_prenajmu} €</p>
                     <p><strong>Záloha:</strong> {item.cena_zalohy} €</p>
-                    {user === item.id_owner ? (
+                    {user.userId === item.id_owner ? (
                         <div className="form-group">
-                            <input className="button" type="submit" value="Upraviť"/>
+                            <input className="button" type="submit" value="Upraviť" onClick={handleEditReservation}/>
                             <input className="button" type="submit" value="Zmazať" onClick={handleDelete}/>
-                            <input className="button" type="submit" value={`Žiadosti o prenájom [${bookings.length}]`} onClick={handleShowReservation}/>
+                            <input className="button" type="submit" value={`Prehľad ponúk [${bookings.length}]`} onClick={handleShowReservation}/>
                           </div>
                     ) : (
                         <div className="form-group">
-                            <input className="button" type="submit" value="Požiadať o prenájom" onClick={() => setField('responseForm')}/>
+                            <input className="button" type="submit" value="Požiadať o prenájom" onClick={handleSetReservation}/>
                         </div>   
                     )}
                 </div>
@@ -138,9 +151,11 @@ export default function OneItemPage({ user, item, goBack, setField }) {
         </div>
         </>
       );
+    } else if (fielder == 'edit'){
+      return < EditItemPage item={item} goBack={handleShowItem}/>;
     }
     return (
-      < ItemBookingList bookings={bookings} />
+      < ItemBookingList bookings={bookings} goBack={handleShowItem}/>
     );
   }
 
@@ -150,5 +165,3 @@ export default function OneItemPage({ user, item, goBack, setField }) {
       </>
   );
 }
-
-

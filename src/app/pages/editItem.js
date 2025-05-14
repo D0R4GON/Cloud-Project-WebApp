@@ -1,23 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuthenticator } from "@aws-amplify/ui-react";
 import axios from 'axios';
 
-export default function OfferItemPage() {
-    const { user } = useAuthenticator((context) => [context.route, context.user]);
-    const lambdaUrl = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/create';
+export default function EditItemPage({ item, goBack }) {
+    const lambdaUrl = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/edit';
     
+    // Initialize formData with 'files' as an empty array if it's undefined
     const [formData, setFormData] = useState({
-        name: '',
-        id_owner: user.userId,
-        description: '',
-        deposit_price: 0,
-        rental_price: 0,
-        location: '',
-        id_category: '',
-        files: [],
+        ...item,
+        image_urls: Array.isArray(item.image_urls)
+            ? item.image_urls.map((url) => ({
+                file_name: url.split('/').pop(), // Get the file name from the URL (for simplicity)
+                file_data: url, // For old images, treat the URL as the base64 data (or path)
+            }))
+            : [],
     });
+
+    console.log(formData);
+
 
     // categories
     const categories = [
@@ -43,10 +44,10 @@ export default function OfferItemPage() {
 
     // handle added files
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
+        const image_urls = Array.from(e.target.files);
         const fileReaders = [];
-    
-        files.forEach((file) => {
+        
+        image_urls.forEach((file) => {
             const reader = new FileReader();
             fileReaders.push(
                 new Promise((resolve) => {
@@ -61,30 +62,23 @@ export default function OfferItemPage() {
             );
             reader.readAsDataURL(file);
         });
-    
+
         Promise.all(fileReaders).then((fileDataArray) => {
             setFormData((prev) => ({
                 ...prev,
-                files: [...prev.files, ...fileDataArray],
+                image_urls: [
+                    ...prev.image_urls, 
+                    ...fileDataArray // Add the new base64 files to the existing image_urls
+                ],
             }));
         });
     };
-    
 
     // handle all on submit
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        const payload = {
-            nazov: formData.name,
-            id_owner: formData.id_owner,
-            popis: formData.description,
-            cena_zalohy: formData.deposit_price,
-            cena_prenajmu: formData.rental_price,
-            lokalita: formData.location,
-            id_category: formData.id_category,
-            files: formData.files
-        };
+        const payload = formData;
     
         try {    
             const response = await axios.post(lambdaUrl, payload, {
@@ -94,19 +88,8 @@ export default function OfferItemPage() {
             });
     
             console.log('Ad submitted:', response.data);
-            alert('Ponuka úspešné zdieľaná!');
-            
-            // reset data
-            setFormData({
-                name: '',
-                id_owner: user.userId,
-                description: '',
-                deposit_price: 0,
-                rental_price: 0,
-                location: '',
-                id_category: '',
-                files: [],
-            });
+            alert('Ponuka úspešne zdieľaná!');
+
         } catch (err) {
             console.error('Submission error:', err.response ? err.response.data : err.message);
             alert('Chyba pri zdieľaní ponuky');
@@ -117,13 +100,17 @@ export default function OfferItemPage() {
     const handleRemoveFile = (indexToRemove) => {
         setFormData((prev) => ({
             ...prev,
-            files: prev.files.filter((_, index) => index !== indexToRemove),
+            image_urls: prev.image_urls.filter((_, index) => index !== indexToRemove), // Remove the selected file
         }));
     };
 
 
     // render page
     return (
+        <>
+        <div className="pathBack">
+            <strong className="pathBackPointer" onClick={goBack}>← Späť</strong>
+        </div>
         <div className="register-card">
             <div className="card-header">
                 <h1 className="log">Vytvoriť ponuku</h1>
@@ -135,7 +122,7 @@ export default function OfferItemPage() {
                         className="whole"
                         type="text"
                         name="name"
-                        value={formData.name}
+                        value={formData.nazov}
                         onChange={handleChange}
                         required
                     />
@@ -146,13 +133,12 @@ export default function OfferItemPage() {
                     <textarea
                         className="whole"
                         name="description"
-                        value={formData.description}
+                        value={formData.popis}
                         onChange={handleChange}
                         required
                         rows={4}
                     />
                 </div>
-
 
                 <div className="form-group">
                     <label htmlFor="deposit_price">Cena zálohy:</label>
@@ -160,7 +146,7 @@ export default function OfferItemPage() {
                         className="whole"
                         type="number"
                         name="deposit_price"
-                        value={formData.deposit_price}
+                        value={formData.cena_zalohy}
                         onChange={handleChange}
                         required
                     />
@@ -172,7 +158,7 @@ export default function OfferItemPage() {
                         className="whole"
                         type="number"
                         name="rental_price"
-                        value={formData.rental_price}
+                        value={formData.cena_prenajmu}
                         onChange={handleChange}
                         required
                     />
@@ -184,7 +170,7 @@ export default function OfferItemPage() {
                         className="whole"
                         type="text"
                         name="location"
-                        value={formData.location}
+                        value={formData.lokalita}
                         onChange={handleChange}
                         required
                     />
@@ -219,22 +205,19 @@ export default function OfferItemPage() {
                     />
                 </div>
 
-                {formData.files.length > 0 && (
+                {formData.image_urls?.length > 0 && (
                     <div className="file-preview-container" style={{ marginTop: '1rem' }}>
                         <p>Nahraté súbory:</p>
                         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                            {formData.files.map((file, index) => (
+                            {formData.image_urls.map((image, index) => (
                                 <div key={index} style={{ maxWidth: '150px', position: 'relative' }}>
-                                    {file.file_name.toLowerCase().match(/\.(png|jpg|jpeg|gif|bmp|webp)$/) ? (
-                                        <img
-                                            src={`data:image/*;base64,${file.file_data}`}
-                                            // src={`${file.file_data}`}
-                                            alt={file.file_name}
-                                            style={{ width: '100%', borderRadius: '8px' }}
-                                        />
-                                    ) : (
-                                        <p>{file.file_name}</p>
-                                    )}
+                                    <img
+                                        src={image.file_data.startsWith('data:image') 
+                                            ? `data:image/jpeg;base64,${image.file_data}` 
+                                            : image.file_data} // Handle both base64 and URL formats
+                                        alt={`Image ${index}`}
+                                        style={{ width: '100%', borderRadius: '8px' }}
+                                    />
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveFile(index)}
@@ -258,7 +241,6 @@ export default function OfferItemPage() {
                         </div>
                     </div>
                 )}
-
                 <input
                     type="submit"
                     value="Zverejni ponuku"
@@ -266,5 +248,6 @@ export default function OfferItemPage() {
                 />
             </form>
         </div>
+        </>
     );
 }

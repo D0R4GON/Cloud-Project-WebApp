@@ -22,8 +22,13 @@ export default function Menu({ bar, setBar }) {
             <label className="radio">
             <button type="radio" name="radio" value="home" checked={bar === "home"} onClick={handleRadioChange} />
             <div className="name">
-                <div style={{ marginTop:"50%"}}>
-                    <ShopLogo/>
+            <div style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ transform: "translateY(20%)" }}>
+                    <ShopLogo />
+                </div>
+                <span style={{ marginLeft: "1rem", fontSize: "1.5rem", fontFamily: "sans-serif" }}>
+                    ExchangeShop
+                </span>
                 </div>
             </div>
             </label>

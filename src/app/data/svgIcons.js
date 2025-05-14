@@ -277,9 +277,8 @@ const ShopLogo = () => {
     <svg 
       version="1.0" 
       xmlns="http://www.w3.org/2000/svg"
-      width="5vw" 
-      height="5wh"
-      viewBox="0 0 1024.000000 1024.000000"
+      width="90px"
+      viewBox="100 120 824 600"
       preserveAspectRatio="xMidYMid meet"
     >
 
