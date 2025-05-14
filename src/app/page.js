@@ -50,7 +50,7 @@ export default function Home() {
     <div className="whole_page">
       <Menu bar={bar} setBar={updateBar} />
     </div>
-    <div style={{marginTop:"13px"}}>
+    <div style={{marginTop:"13px", marginLeft: "130px", marginRight: "130px", marginBottom: "13px"}}>
       {renderField()}
     </div>
     <hr style={{

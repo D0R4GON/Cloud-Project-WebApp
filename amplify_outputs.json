@@ -29,10 +29,12 @@
         "FACEBOOK"
       ],
       "redirect_sign_in_uri": [
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "https://main.dskn0ozturdp2.amplifyapp.com"
       ],
       "redirect_sign_out_uri": [
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "https://main.dskn0ozturdp2.amplifyapp.com"
       ],
       "response_type": "code",
       "scopes": [

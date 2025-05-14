@@ -2,7 +2,7 @@
 header {
   font-size: 2rem;
   height: fit-content;
-  background: #dedede;
+  background: #91cb3e;
   display: flex;
   align-items: center;
   justify-content: space-between; /* key change */

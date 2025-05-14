@@ -26,8 +26,8 @@ export default function Menu({ bar, setBar }) {
                 <div style={{ transform: "translateY(20%)" }}>
                     <ShopLogo />
                 </div>
-                <span style={{ marginLeft: "1rem", fontSize: "1.5rem", fontFamily: "sans-serif" }}>
-                    ExchangeShop
+                <span style={{ marginLeft: "1rem", fontSize: "1.8rem", fontFamily: "raleway" }}>
+                    RentSpace
                 </span>
                 </div>
             </div>

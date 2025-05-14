@@ -118,7 +118,7 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
                     <div className="itemName">Názov</div>
                 </label>
 
-                <label className="radio">
+                <label className="radio" >
                     <button type="radio" name="radio" onClick={() => requestSort('cena_prenajmu')}></button>
                     <p className="itemName">Cena</p>
                 </label>
@@ -152,13 +152,13 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
                 }
             default:
                 return (
-                    <>
+                    <div>
                         <div className="pathBack">
                             <strong className="pathBackPointer" onClick={() => setBar('home')}>← Späť</strong>
                         </div>
                         {renderHeader()}
                         <div className="ItemField">{renderItemsInBoxes()}</div>
-                    </>
+                    </div>
                 )
         }
     }
