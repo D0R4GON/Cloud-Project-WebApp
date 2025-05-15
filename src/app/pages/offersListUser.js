@@ -242,10 +242,10 @@ const ReservationWithItem = ({ item, handleClick }) => {
         );
       case 'pickedUp':
         return (
-          <>
+          <div>
             <input type="submit" className="button" value="Vrátiť" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
             <input type="submit" className="button" value="Zobraziť" style={{ padding: '0.5rem 1rem' }} onClick={handleClickOnReservation}/>
-          </>
+          </div>
         );
       default:
         return (
