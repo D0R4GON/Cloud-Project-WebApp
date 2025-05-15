@@ -20,12 +20,17 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
 
         // get items
         let data = {};
+        let country = localStorage.getItem("country");
         if (itemCategory){
             if (itemCategory != "Všetko"){
                 data = {
-                    body: `{\"id_category\":\"${itemCategory}\"}`
+                    body: `{\"id_category\":\"${itemCategory}\", \"country\":\"${country}\"}`
                 };
-            }    
+            } else {
+                data = {
+                    body: `{\"country\":\"${country}\"}`
+                };
+            }
         }
         
         fetch(API_URL, {

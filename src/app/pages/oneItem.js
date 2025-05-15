@@ -156,6 +156,7 @@ export default function OneItemPage({ user, item, setField }) {
                     <p><strong>Info</strong></p>
                     <hr style={{ width: '100%', border: '1px solid black' }} />
                     <p><strong>Majiteľ:</strong> {item.id_owner}</p>
+                    <p><strong>Krajina:</strong> {item.country}</p>
                     <p><strong>Poloha:</strong> {item.lokalita}</p>
                     <p><strong>Kategória:</strong> {item.id_category}</p>
                     <p><strong>Cena za prenájom:</strong> {item.cena_prenajmu} €</p>

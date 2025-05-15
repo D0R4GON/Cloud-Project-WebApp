@@ -17,6 +17,7 @@ export default function OfferItemPage() {
         location: '',
         id_category: '',
         files: [],
+        country: ''
     });
 
     // categories
@@ -30,6 +31,11 @@ export default function OfferItemPage() {
         { value: 'Knihy', label: 'Knihy' },
         { value: 'Šport', label: 'Šport' },
         { value: 'Oblečenie', label: 'Oblečenie' }
+    ];
+
+    const states = [
+        { value: 'SK', label: 'Slovakia' },
+        { value: 'CZ', label: 'Czech Republic' },
     ];
 
     // handle change of the input
@@ -83,8 +89,11 @@ export default function OfferItemPage() {
             cena_prenajmu: formData.rental_price,
             lokalita: formData.location,
             id_category: formData.id_category,
-            files: formData.files
+            files: formData.files,
+            country: formData.country
         };
+
+        localStorage.setItem('country', formData.country)
     
         try {    
             const response = await axios.post(lambdaUrl, payload, {
@@ -106,6 +115,7 @@ export default function OfferItemPage() {
                 location: '',
                 id_category: '',
                 files: [],
+                country: '',
             });
         } catch (err) {
             console.error('Submission error:', err.response ? err.response.data : err.message);
@@ -188,6 +198,24 @@ export default function OfferItemPage() {
                         onChange={handleChange}
                         required
                     />
+                </div>
+                
+                <div className="form-group">
+                    <label htmlFor="country">Krajina:</label>
+                    <select
+                        className="whole"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Vyberte krajinu</option>
+                        {states.map((states) => (
+                            <option key={states.value} value={states.value}>
+                                {states.label}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="form-group">

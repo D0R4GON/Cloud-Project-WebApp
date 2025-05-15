@@ -9,6 +9,13 @@ export default function ProfileDropdown({ setBar }) {
     const { route, signOut } = useAuthenticator((context) => [context.route]);
     const [open, setOpen] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
+    const [country, setCountry] = useState("SK");
+    
+    useEffect(() => {
+        localStorage.setItem('country', country);
+        console.log("Country in local Storage: ", localStorage.getItem("country"));
+    }, [country]);
+
 
     useEffect(() => {
         const loadSession = async () => {
@@ -41,6 +48,10 @@ export default function ProfileDropdown({ setBar }) {
         setOpen(false);
     };
 
+    const handleCountryClick = () => {
+        country == 'SK' ? setCountry('CZ') : setCountry("SK");
+    }
+
     return (
         <div className="profile-dropdown">
             <button className="dropdown-toggle">
@@ -62,6 +73,9 @@ export default function ProfileDropdown({ setBar }) {
             {/* {open && ( */}
                 <ul className="moving-text">
                     {/* {route === "authenticated" ? ( */}
+                    <div onClick={handleCountryClick} style={{cursor:"pointer", fontFamily: "monospace" }}>
+                    {country === "SK" ? <><strong style={{color:"grey"}}>SK</strong>/CZ</> : <>SK/<strong style={{color:"grey"}}>CZ</strong></>}
+                    </div>
                     {loggedIn ? (
                     <>
                         <li onClick={() => handleSelect("userList")}>Môj katalóg</li>
