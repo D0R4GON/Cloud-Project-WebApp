@@ -4,6 +4,7 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 import React from "react";
 import OneItemPage from "./oneItem";
 import { LoanEditPage } from './offerLoan';
+import PayPalButton from './paypalButton';
 
 
 const BookingList = () => {
@@ -13,7 +14,7 @@ const BookingList = () => {
   const [field, setField] = useState("reservations");
   const [selectedItem, setSelectedItem] = useState(null);
   
-  const [showOffers, setShowOffers] = useState(true);
+  const [showOffers, setShowOffers] = useState(false);
   const [showAccepted, setShowAccepted] = useState(false);
   const [showForReturn, setShowForReturn] = useState(false);
   const [showReturned, setShowReturned] = useState(false);
@@ -87,7 +88,7 @@ const BookingList = () => {
     </div>
     {showAccepted && (
       <div className="ItemField">
-        {renderItemsInBoxes('accepted')}
+        {renderItemsInBoxes(['accepted', 'paid'])}
       </div>
     )}
     
@@ -133,6 +134,8 @@ const ReservationWithItem = ({ item, handleClick }) => {
   const [product, setProduct] = useState(null);
   const [render, setRender] = useState('all');
   const [sending, setSending] = useState(false);
+  const [payButtons, setPayButtons] = useState(false);
+  const [itemStatus, setItemStatus] = useState(item.status_of_reservation);
 
   useEffect(() => {
     const getItem = async () => {
@@ -208,21 +211,40 @@ const ReservationWithItem = ({ item, handleClick }) => {
   }
 
   const renderButton = () => {
-    switch(item.status_of_reservation){
+    switch(itemStatus){
       case 'offer':
-        return <input type="submit" className="button" value="Zobraziť viac" style={{ padding: '0.5rem 1rem' }} onClick={handleClickOnReservation}/>
+        return ( 
+          <div>
+            <input type="submit" className="button" value="Zrušiť" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>        
+            <input type="submit" className="button" value="Zobraziť" style={{ padding: '0.5rem 1rem' }} onClick={handleClickOnReservation}/>
+          </div>
+        );
         // return <input type="submit" className="button" value="Zrušiť" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
       case 'accepted':
+      case 'paid':
         return (
           <div>
+            {itemStatus !== 'paid' ? (
+              <>
+                { payButtons ? 
+                <>
+                  <input type="submit" className="button" value="Späť" style={{ padding: '0.5rem 1rem' }} onClick={() => setPayButtons(!payButtons)}/>
+                  <PayPalButton valueToPay={item.compesation_amount} id_reservation={item.id_reservation} setItemStatus={setItemStatus}/>
+                </> 
+                : <input type="submit" className="button" value="Zaplatiť" style={{ padding: '0.5rem 1rem' }} onClick={() => setPayButtons(!payButtons)}/>
+              }
+              </>
+            ):(<></>)}
             <input type="submit" className="button" value="Prevziať" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
             <input type="submit" className="button" value="Zrušiť" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
+            <input type="submit" className="button" value="Zobraziť" style={{ padding: '0.5rem 1rem' }} onClick={handleClickOnReservation}/>
           </div>
         );
       case 'pickedUp':
         return (
           <>
             <input type="submit" className="button" value="Vrátiť" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
+            <input type="submit" className="button" value="Zobraziť" style={{ padding: '0.5rem 1rem' }} onClick={handleClickOnReservation}/>
           </>
         );
       default:
@@ -234,13 +256,13 @@ const ReservationWithItem = ({ item, handleClick }) => {
   }
 
   const renderField = () => {
-    if (render != 'all'){
+    if (render == 'one'){
       return <LoanEditPage item={product} reservation={item} goBack={handleClickOnReservation} goToItem={() => handleClick(product)}/>;
     }
     return (
     <div className="itemBox" style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(5, 1fr)',
+      gridTemplateColumns: 'repeat(6, 1fr)',
       gap: '1rem',
     }}>
       <div className="itemDetails" onClick={() => handleClick(product)}>
@@ -258,6 +280,13 @@ const ReservationWithItem = ({ item, handleClick }) => {
       </div>
       <div className="itemDetails">
         <p><strong>Poznámky:</strong> {item.notes}</p>
+      </div>
+      <div className="itemDetails">
+        <p><strong>Cena:</strong> {item.compesation_amount}€</p>
+        {itemStatus == 'paid' ?
+          <p><strong>Zaplatené!</strong></p>
+          : <></>
+        }
       </div>
       {sending ? <strong>Odpoveď odoslaná</strong> :  <>{renderButton()}</>}
     </div>

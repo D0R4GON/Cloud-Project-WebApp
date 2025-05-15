@@ -210,6 +210,8 @@ const LoanEditPage = ({reservation, item, goBack, goToItem}) => {
                 return <>Žiadosť Odoslaná</>
             case 'accepted':
                 return <>Žiadosť Akceptovaná</>
+            case 'paid':
+                return <>Zaplatené</>
             case 'canceled':
                 return <>Žiadosť Zamietnutá</>
             case 'pickedUp':
@@ -255,47 +257,6 @@ const LoanEditPage = ({reservation, item, goBack, goToItem}) => {
         <div className='categoryBox' style={{textAlign:"left"}}>
         <div className="register-card" style={{width:"98%"}}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem' }}>
-                {/* Left: form */}
-                {/* <div style={{ flex: 1 }}>
-                <label style={{ display: "block", marginBottom: "1rem", fontWeight: "bold" }}>Zadajte objednávku:</label>
-                <div className="itemBox" key={item.ad_id} onClick={goBack}>
-                <img className="itemImage" src={item.image_urls[0]} alt={item.image_urls[0]} />
-                    <div className="itemDetails">
-                        <h2>{item.nazov}</h2>
-                        <p>{item.popis}</p>
-                    </div>
-                </div>
-                <div className="form-group" style={{marginTop:"10px"}}>
-                    <label>Od dátumu:</label>
-                    <input
-                    type="date"
-                    name="from_date"
-                    className="whole"
-                    value={formData.from_date}
-                    onChange={handleChange}
-                    required
-                    min={new Date().toISOString().split("T")[0]}
-                    max={formData.to_date || ""}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Do dátumu:</label>
-                    <input
-                    type="date"
-                    name="to_date"
-                    className="whole"
-                    value={formData.to_date}
-                    onChange={handleChange}
-                    required
-                    min={formData.from_date || new Date().toISOString().split("T")[0]}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Poznámky:</label>
-                    <textarea name="notes" className="whole" value={formData.notes} onChange={handleChange} />
-                </div>
-                </div> */}
-
                 <div style={{ flex: 1, marginRight: "10%" }}>
                 <label style={{ display: "block", marginBottom: "1rem", fontWeight: "bold" }}>Informácie o rezervácií:</label>
                 {/* <div className="item-info" style={{ width: "100%" }}> */}                    
@@ -335,8 +296,8 @@ const LoanEditPage = ({reservation, item, goBack, goToItem}) => {
                     <p><strong>Stav:</strong> {renderStatus()}</p>
                     <br />
                     {/* <input type="submit" className="button" value="Odoslať zmeny" style={{ marginTop: '2rem' }} onSubmit={handleSubmit}/> */}
-                    <input type="submit" className="button" value="Zmazať" style={{ marginTop: '5px' }} onSubmit={handleRemove}/>
-                    <input type="submit" className="button" value="Zobraziť  menej" style={{ marginTop: '5px' }} onClick={goBack}/>
+                    {/* <input type="submit" className="button" value="Zmazať" style={{ marginTop: '5px' }} onSubmit={handleRemove}/> */}
+                    <input type="submit" className="button" value="Späť" style={{ marginTop: '5px' }} onClick={goBack}/>
                     </div>
                 </div>
             </div>

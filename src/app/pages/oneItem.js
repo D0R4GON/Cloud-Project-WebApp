@@ -3,13 +3,34 @@ import React from "react";
 import { useEffect, useState } from 'react';
 import ItemBookingList from "./offersList";
 import EditItemPage from "./editItem";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import { getCurrentUser } from 'aws-amplify/auth';
 
 // function to show only one item on the field
 export default function OneItemPage({ user, item, setField }) {
   const DELETE_API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/delete';
   const [bookings, setBookings] = useState([]);
   const [fielder, setFielder] = useState("item");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const { route } = useAuthenticator((context) => [context.route]);
 
+  useEffect(() => {
+    const loadSession = async () => {
+      try {
+          const user = await getCurrentUser();
+          // Optional: set logged in state here
+          if (user){
+              setLoggedIn(true);
+          }
+      } catch (err) {
+          // console.error("Failed to fetch session:", err);
+          setLoggedIn(false); // if session fails, mark as not logged in
+      }
+    };
+
+    loadSession();
+  }, [route]);  
+  
   useEffect(() => {
 
     const fetchBookings = async () => {
@@ -105,7 +126,11 @@ export default function OneItemPage({ user, item, setField }) {
   
 
   const handleSetReservation = () => {
-    setField('responseForm')
+    if (loggedIn){
+      setField('responseForm');
+    } else {
+      alert("Je nutné sa prihlásiť!")
+    }
   }
 
   const renderFielder = () => {
@@ -155,7 +180,7 @@ export default function OneItemPage({ user, item, setField }) {
       return < EditItemPage item={item} goBack={handleShowItem}/>;
     }
     return (
-      < ItemBookingList bookings={bookings} goBack={handleShowItem}/>
+      < ItemBookingList item={item} user={user} goBack={handleShowItem}/>
     );
   }
 

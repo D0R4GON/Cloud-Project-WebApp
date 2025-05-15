@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Cloud Web App",
+  title: "RentSpace",
   description: "Web app made in cloud made as an assignment of Cloud Systems",
 };
 

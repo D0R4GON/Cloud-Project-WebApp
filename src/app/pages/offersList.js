@@ -1,20 +1,48 @@
 import { useEffect, useState } from 'react';
 import React from "react";
 import OneItemPage from "./oneItem";
+import axios from "axios";
 
 
 
-const ItemBookingList = ({ bookings, goBack }) => {
+const ItemBookingList = ({ item, user, goBack }) => {
 
-  const [showOffers, setShowOffers] = useState(true);
+  const [showOffers, setShowOffers] = useState(false);
   const [showAccepted, setShowAccepted] = useState(false);
   const [showReturned, setShowReturned] = useState(false);
   const [showForReturn, setShowForReturn] = useState(true);
 
 
-  // const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [field, setField] = useState("reservations");
   const [selectedItem, setSelectedItem] = useState(null);
+
+  useEffect(() => {
+  
+      const fetchBookings = async () => {
+        try {
+          const GET_API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + `/booking/product/${item.ad_id}`;
+          const response = await axios.get(GET_API_URL,
+            {
+              mode: 'cors',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+    
+          const data = JSON.parse(response.data.body);
+          setBookings(data);
+          console.log(data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+    
+      if (user) {
+        fetchBookings();
+      }
+    }, [user]);
 
   const renderItemsInBoxes = (statusFilter) => {
     const filters = Array.isArray(statusFilter) ? statusFilter : [statusFilter];
@@ -61,13 +89,13 @@ const ItemBookingList = ({ bookings, goBack }) => {
         {/* Accepted offers */}
         <div className="ItemField">
           <span onClick={() => setShowAccepted(!showAccepted)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
-            Čakajúce... {showAccepted ? "▲" : "▼"}
+            Akceptované... {showAccepted ? "▲" : "▼"}
           </span>
           <hr style={{ marginTop:"-10px", width: '100%', border: '1px solid black' }} />
         </div>
         {showAccepted && (
           <div className="ItemField">
-            {renderItemsInBoxes('accepted')}
+            {renderItemsInBoxes(['accepted', 'paid'])}
           </div>
         )}
 
@@ -131,7 +159,7 @@ const Reservation = ({ item }) => {
       case 'Prijať':
         editReservation('accepted');
         return;    
-      case 'Odovzdať':
+      case 'Potvrdiť prevzatie':
         editReservation('pickedUp');
         return;
       case 'Zrušiť':
@@ -157,9 +185,10 @@ const Reservation = ({ item }) => {
         </>
         );
       case 'accepted':
+      case 'paid':  
         return (
           <div>
-            <input type="submit" className="button" value="Odovzdať" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
+            <input type="submit" className="button" value="Potvrdiť prevzatie" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
             <input type="submit" className="button" value="Zrušiť" style={{ padding: '0.5rem 1rem' }} onClick={handleReservationAnswer}/>
           </div>
         );
@@ -198,6 +227,10 @@ const Reservation = ({ item }) => {
       </div>
       <div className="itemDetails">
         <p><strong>Cena:</strong> {item.compesation_amount}€</p>
+        {item.status_of_reservation == 'paid' ?
+          <p><strong>Zaplatené!</strong></p>
+          : <></>
+        }
       </div>
       <div className="itemDetails">
         {sending ? <strong>Odpoveď odoslaná</strong> :  <>{renderButton()}</>}

@@ -11,8 +11,6 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
     const [selectedItem, setSelectedItem] = useState(null);
     const [itemList, setItemList] = useState([]);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
-
-    const { route } = useAuthenticator((context) => [context.route]);
     const API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/get';
 
     // choose which items to show and get correct data from cloud
@@ -139,17 +137,17 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
                     />
                 ); 
             case 'responseForm':
-                if (route != "authenticated") {
-                    setBar('login');
-                    return null;
-                } else {
+                // if (route != "authenticated") {
+                //     setBar('login');
+                //     return null;
+                // } else {
                     return (
                         <OfferLoanPage
                             item={selectedItem}
                             goBack={() => setFielder('oneItem')}
                         />
                     );
-                }
+                // }
             default:
                 return (
                     <div>

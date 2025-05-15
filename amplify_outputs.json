@@ -30,11 +30,15 @@
       ],
       "redirect_sign_in_uri": [
         "http://localhost:3000",
-        "https://main.dskn0ozturdp2.amplifyapp.com"
+        "https://main.dskn0ozturdp2.amplifyapp.com",
+        "https://www.rentspace.store",
+        "https://rentspace.store"
       ],
       "redirect_sign_out_uri": [
         "http://localhost:3000",
-        "https://main.dskn0ozturdp2.amplifyapp.com"
+        "https://main.dskn0ozturdp2.amplifyapp.com",
+        "https://www.rentspace.store",
+        "https://rentspace.store"
       ],
       "response_type": "code",
       "scopes": [
