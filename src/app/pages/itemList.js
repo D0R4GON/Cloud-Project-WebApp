@@ -13,6 +13,7 @@ export default function ItemListPage({ user, itemCategory, setBar }) {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const API_URL = process.env.NEXT_PUBLIC_CLOUD_API_URL + '/ads/get';
 
+
     // choose which items to show and get correct data from cloud
     useEffect(() => {
         setSelectedItem(null);

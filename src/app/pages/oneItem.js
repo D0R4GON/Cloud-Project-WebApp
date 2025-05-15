@@ -5,6 +5,8 @@ import ItemBookingList from "./offersList";
 import EditItemPage from "./editItem";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { getCurrentUser } from 'aws-amplify/auth';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 
 // function to show only one item on the field
 export default function OneItemPage({ user, item, setField }) {
@@ -13,6 +15,7 @@ export default function OneItemPage({ user, item, setField }) {
   const [fielder, setFielder] = useState("item");
   const [loggedIn, setLoggedIn] = useState(false);
   const { route } = useAuthenticator((context) => [context.route]);
+  const [userCountry, setUserCountry] = useState('');
 
   useEffect(() => {
     const loadSession = async () => {
@@ -29,7 +32,20 @@ export default function OneItemPage({ user, item, setField }) {
     };
 
     loadSession();
-  }, [route]);  
+  }, [route]); 
+
+  useEffect(() => {
+      const loadSession = async () => {
+          try {
+              const session = await fetchAuthSession();
+              const idToken = session.tokens?.idToken;
+              setUserCountry(idToken?.payload?.zoneinfo || '');
+          } catch (err) {
+              console.error("Failed to fetch session:", err);
+          }
+      };
+      loadSession();
+  }, [user]);
   
   useEffect(() => {
 
@@ -126,7 +142,9 @@ export default function OneItemPage({ user, item, setField }) {
   
 
   const handleSetReservation = () => {
-    if (loggedIn){
+    if (loggedIn && item.country != userCountry){
+      alert(`Je nutné byť prihlásený účtom v krajine ${item.country}!`)
+    } else if (loggedIn) {
       setField('responseForm');
     } else {
       alert("Je nutné sa prihlásiť!")
@@ -156,7 +174,7 @@ export default function OneItemPage({ user, item, setField }) {
                     <p><strong>Info</strong></p>
                     <hr style={{ width: '100%', border: '1px solid black' }} />
                     <p><strong>Majiteľ:</strong> {item.id_owner}</p>
-                    <p><strong>Krajina:</strong> {item.country}</p>
+                    <p><strong>Krajina:</strong> {item.country == 'CZ' ? 'Česká Republika' : "Slovensko"}</p>
                     <p><strong>Poloha:</strong> {item.lokalita}</p>
                     <p><strong>Kategória:</strong> {item.id_category}</p>
                     <p><strong>Cena za prenájom:</strong> {item.cena_prenajmu} €</p>

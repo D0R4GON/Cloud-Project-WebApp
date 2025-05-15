@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import axios from 'axios';
+import { fetchAuthSession } from 'aws-amplify/auth';
+
 
 export default function OfferItemPage() {
     const { user } = useAuthenticator((context) => [context.route, context.user]);
@@ -20,6 +22,24 @@ export default function OfferItemPage() {
         country: ''
     });
 
+
+    useEffect(() => {
+        const loadSession = async () => {
+            try {
+                const session = await fetchAuthSession();
+                const idToken = session.tokens?.idToken;
+                // setUserCountry(idToken?.payload?.zoneinfo || '');
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    country: idToken?.payload?.zoneinfo || ''
+                }));
+            } catch (err) {
+                console.error("Failed to fetch session:", err);
+            }
+        };
+        loadSession();
+    }, [user]);
+
     // categories
     const categories = [
         { value: 'Dom, záhrada', label: 'Dom, záhrada' },
@@ -33,10 +53,6 @@ export default function OfferItemPage() {
         { value: 'Oblečenie', label: 'Oblečenie' }
     ];
 
-    const states = [
-        { value: 'SK', label: 'Slovakia' },
-        { value: 'CZ', label: 'Czech Republic' },
-    ];
 
     // handle change of the input
     const handleChange = (e) => {
@@ -199,23 +215,17 @@ export default function OfferItemPage() {
                         required
                     />
                 </div>
-                
+
                 <div className="form-group">
                     <label htmlFor="country">Krajina:</label>
-                    <select
+                    <input
                         className="whole"
+                        type="text"
                         name="country"
-                        value={formData.country}
-                        onChange={handleChange}
+                        value={formData.country == 'CZ' ? 'Česká Republika' : "Slovensko"}
+                        disabled
                         required
-                    >
-                        <option value="">Vyberte krajinu</option>
-                        {states.map((states) => (
-                            <option key={states.value} value={states.value}>
-                                {states.label}
-                            </option>
-                        ))}
-                    </select>
+                    />
                 </div>
 
                 <div className="form-group">

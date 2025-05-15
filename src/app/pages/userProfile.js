@@ -10,6 +10,8 @@ export default function UserProfilePage() {
     const [name, setName] = useState("");
     const [idUser, setIdUser] = useState("");
     const [tokens, setTokens] = useState(null);
+    const [userCountry, setUserCountry] = useState('');
+    
 
     useEffect(() => {
         const loadSession = async () => {
@@ -18,13 +20,14 @@ export default function UserProfilePage() {
                 const idToken = session.tokens?.idToken;
                 const accessToken = session.tokens?.accessToken;
 
-                console.log("Token Payload:", idToken.payload);
+                console.log("Token Payload:", idToken);
 
                 setTokens({ idToken, accessToken });
                 
                 setName(idToken?.payload?.name || '');
                 setEmail(idToken?.payload?.email || '');
                 setIdUser(user?.userId);
+                setUserCountry(idToken?.payload?.zoneinfo || '');
 
             } catch (err) {
                 console.error("Failed to fetch session:", err);
@@ -78,6 +81,19 @@ export default function UserProfilePage() {
                         type="text"
                         name="name"
                         value={email}
+                        // onChange={handleChange}
+                        disabled
+                        required
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="name">Krajina:</label>
+                    <input
+                        className="whole"
+                        type="text"
+                        name="country"
+                        value={userCountry == 'CZ' ? 'Česká Republika' : "Slovensko"}
                         // onChange={handleChange}
                         disabled
                         required
